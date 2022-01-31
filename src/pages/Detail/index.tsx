@@ -71,7 +71,7 @@ export default function Home() {
             <div className="bg-emerald-400 flex items-center justify-center p-4 rounded-lg">
               <img className="w-40 md:w-52" src={imageUrl} alt="character" />
             </div>
-            <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-col md:flex-row md:justify-between items-center">
               <div className="flex flex-row space-x-4 overflow-x-auto py-4">
                 {data?.sprites &&
                   generateSprites(data?.sprites)?.map(
