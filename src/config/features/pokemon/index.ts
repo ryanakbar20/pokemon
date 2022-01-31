@@ -9,7 +9,7 @@ export const pokemonApi = createApi({
     return {
       fetchListPokemon: builder.query({
         query() {
-          return `/pokemon?limit=10`;
+          return `/pokemon?limit=100`;
         },
       }),
 
