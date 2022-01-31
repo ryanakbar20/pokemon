@@ -1,10 +1,9 @@
+import { useState, useEffect } from "react";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import {
   useFetchDetailPokemonQuery,
-  useAddPokemonMutation,
+  useDeletePokemonMutation,
 } from "../../config/features";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Modal } from "../../components";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -13,22 +12,17 @@ export default function Home() {
 
   const { data = {} } = useFetchDetailPokemonQuery(params?.id);
 
-  const [addPokemon, { isSuccess }] = useAddPokemonMutation();
+  const [deletePokemon, { isSuccess }] = useDeletePokemonMutation();
 
-  useEffect(() => {
-    if (isSuccess) {
-      setVisibleModal(false);
-      navigate("/my-pokemon");
-    }
-  }, [isSuccess, navigate]);
-
-  const [visibleModal, setVisibleModal] = useState(false);
   const [imageUrl, setImageUrl] = useState(
     `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${params?.id}.png`
   );
-  const [pokemonName, setPokemonName] = useState(
-    (location?.state as any)?.name
-  );
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/my-pokemon");
+    }
+  }, [isSuccess, navigate]);
 
   function generateSprites(sprites: any) {
     const listSprites = [];
@@ -47,14 +41,9 @@ export default function Home() {
     return listSprites;
   }
 
-  async function handleCatchPokemon() {
+  async function handleRelease() {
     try {
-      addPokemon({
-        idPokemon: params?.id,
-        name: pokemonName,
-        imageUrl: imageUrl,
-        url: `https://pokeapi.co/api/v2/pokemon/${params?.id}`,
-      });
+      deletePokemon(params?.id);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -94,9 +83,9 @@ export default function Home() {
               </div>
               <button
                 className="px-4 py-2 w-40 h-12 text-white bg-red-500 rounded-md font-medium hover:bg-red-600"
-                onClick={() => setVisibleModal(true)}
+                onClick={handleRelease}
               >
-                Catch Pokémon
+                Release Pokémon
               </button>
             </div>
             <div>
@@ -132,28 +121,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {visibleModal && (
-        <Modal
-          onOk={handleCatchPokemon}
-          onCancel={() => setVisibleModal(false)}
-        >
-          <div className="w-full">
-            <h1 className="text-red-500 font-bold text-lg md:text-xl uppercase text-center">
-              Success Catch Pokémon
-            </h1>
-            <div className="flex flex-col space-y-2 mt-4">
-              <label className="font-medium" htmlFor="input">
-                Pokemon Name
-              </label>
-              <input
-                className="border-2 border-gray-100 rounded-md px-2"
-                value={pokemonName}
-                onChange={(e) => setPokemonName(e.target.value)}
-              />
-            </div>
-          </div>
-        </Modal>
-      )}
     </>
   );
 }

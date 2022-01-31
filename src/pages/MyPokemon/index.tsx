@@ -1,23 +1,23 @@
-import { useFetchListPokemonQuery } from "../../config/features";
+import { useFetchListMyPokemonQuery } from "../../config/features";
 import { Card } from "../../components";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-export default function Home() {
+export default function MyPokemon() {
   const navigate = useNavigate();
 
-  const { data = {} } = useFetchListPokemonQuery({});
+  const { data = {}, refetch } = useFetchListMyPokemonQuery({});
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return (
-    <div className="bg-gray-100">
-      <div className="bg-white max-w-screen-md mx-auto p-4">
-        <div className="flex flex-row justify-between">
-          <h1 className="text-red-500 font-bold text-2xl md:text-3xl">
-            Pokémon
-          </h1>
-          <button className="px-4 py-2 text-white bg-red-500 rounded-md font-medium hover:bg-red-600" onClick={() => navigate("/my-pokemon")}>
-            My Pokémon
-          </button>
-        </div>
+    <div className="bg-gray-100 h-screen">
+      <div className="bg-white max-w-screen-md mx-auto p-4 h-screen">
+        <h1 className="text-red-500 font-bold text-2xl md:text-3xl">
+          My Pokémon
+        </h1>
         <div className="flex flex-col space-y-4 mt-8">
           {data?.results?.map((item: any, index: number) => {
             return (
@@ -28,7 +28,7 @@ export default function Home() {
                   item?.url?.split("/")[6]
                 }.svg`}
                 onClick={() =>
-                  navigate(`/pokemon/${item?.url?.split("/")[6]}`, {
+                  navigate(`/my-pokemon/${item?.url?.split("/")[6]}`, {
                     state: { name: item?.name },
                   })
                 }
